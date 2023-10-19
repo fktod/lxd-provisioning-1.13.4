@@ -43,7 +43,7 @@ EOF
 
 # Install Kubernetes
 echo "[TASK 4] Install Kubernetes components (kubeadm, kubelet and kubectl)"
-yum install -q -y kubelet-1.13.4-0.x86_64 kubectl-1.13.4-0.x86_64 kubeadm-1.13.4-0.x86_64 kubernetes-cni-0.6.0-0.x86_64 >/dev/null 2>&1
+yum install -q -y kubelet-1.17.0 kubectl-1.17.0 kubeadm-1.17.0 >/dev/null 2>&1
 
 # Start and Enable kubelet service
 echo "[TASK 5] Enable and start kubelet service"
@@ -65,6 +65,9 @@ echo "kubeadmin" | passwd --stdin root >/dev/null 2>&1
 echo "[TASK 8] Install additional packages"
 yum install -y -q which net-tools sudo sshpass less >/dev/null 2>&1
 
+# Hack required to provision k8s v1.15+ in LXC container
+mknod /dev/kmsg c 1 11
+
 #######################################
 # To be executed only on master nodes #
 #######################################
@@ -83,7 +86,7 @@ then
 
   # Deploy flannel network
   echo "[TASK 11] Deploy Flannel network"
-  kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/bc79dd1505b0c8681ece4de4c0d86c5cd2643275/Documentation/kube-flannel.yml > /dev/null 2>&1
+  kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/be2cb996dab08c68614a05e3bf30020c0a9fbafc/Documentation/kube-flannel.yml > /dev/null 2>&1
 
   # Generate Cluster join command
   echo "[TASK 12] Generate and save cluster join command to /joincluster.sh"
